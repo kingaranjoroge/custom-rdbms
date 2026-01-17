@@ -1,6 +1,10 @@
 # Mini RDBMS + Next.js Demo
 
-A tiny relational database engine implemented in TypeScript and embedded inside a Next.js App Router app. No external database or ORM is used—data is stored as JSON files under `/storage`.
+A tiny relational database engine implemented in TypeScript and embedded inside a Next.js App Router app. No external database or ORM is used - data is stored as JSON files under `/storage`.
+
+## 🚀 Live Demo
+
+**[Try it here: https://custom-rdbms.vercel.app/](https://custom-rdbms.vercel.app/)**
 
 ## Features
 - Custom table/column definitions with INT and TEXT types
