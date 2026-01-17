@@ -52,7 +52,7 @@ export default function DashboardPage() {
 
         <div className="space-y-2">
           <p className="text-sm text-slate-300">Result</p>
-          <pre className="bg-slate-900 border border-slate-800 rounded-md p-3 text-sm text-slate-100 overflow-auto min-h-[160px]">
+          <pre className="bg-slate-900 border border-slate-800 rounded-md p-3 text-sm text-slate-100 overflow-auto min-h-40">
             {output || 'No output yet.'}
           </pre>
         </div>
