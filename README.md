@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mini RDBMS + Next.js Demo
 
-## Getting Started
+A tiny relational database engine implemented in TypeScript and embedded inside a Next.js App Router app. No external database or ORM is used—data is stored as JSON files under `/storage`.
 
-First, run the development server:
+## Features
+- Custom table/column definitions with INT and TEXT types
+- Primary key and unique constraints enforced via in-memory indexes
+- CRUD operations: CREATE, INSERT, SELECT, UPDATE, DELETE
+- Simple SQL-like parser to AST
+- Query executor with INNER JOIN support
+- File-backed persistence per table (JSON)
+- Next.js API route for executing SQL payloads
+- Web dashboard UI for interactive SQL queries
+- Terminal-based interactive REPL with table-formatted output
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Architecture
+```
+/app
+  /api/db/route.ts       -> Thin HTTP layer calling the executor
+  /dashboard/page.tsx    -> Web UI playground for SQL input/output
+/lib/mini-db
+  Column.ts              -> Column type definition
+  Index.ts               -> Map-backed index with uniqueness enforcement
+  Table.ts               -> Table storage, constraints, CRUD, index maintenance
+  Database.ts            -> Table registry + JSON persistence
+  Parser.ts              -> SQL-like to AST
+  Executor.ts            -> AST execution against Database
+  Join.ts                -> INNER JOIN helper using indexes when present
+  Errors.ts              -> Custom error types
+  repl.ts                -> Terminal-based interactive REPL interface
+/storage                 -> Persisted table JSON files
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ASCII Diagram
+```
++-----------+       +-----------+       +-------------+
+|  Parser   | --->  | Executor  | --->  |  Database   |
++-----------+       +-----------+       +-------------+
+                                        |  Table(s)   |
+                                        |  Index(es)  |
+                                        +-------------+
+                                               |
+                                               v
+                                           /storage
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Supported SQL Syntax
+- `CREATE TABLE table (col TYPE [PRIMARY KEY|UNIQUE], ...)`
+- `INSERT INTO table VALUES (v1, v2, ...)`
+- `SELECT cols FROM table [JOIN other ON a=b] [WHERE col=value]`
+- `UPDATE table SET col=value [, ...] WHERE col=value`
+- `DELETE FROM table [WHERE col=value]`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Notes
+- Keywords are case-insensitive
+- Only `INT` and `TEXT` column types are supported
+- WHERE conditions are equality-only and single-clause
+- INNER JOIN only; no nested or outer joins
 
-## Learn More
+## Design Trade-offs
+- Prioritized clarity over performance; indexes only on primary/unique columns
+- JSON persistence keeps implementation simple but is not concurrent-safe
+- Type checking is minimal (number for INT, string for TEXT); no implicit casts
+- Join output prefixes columns with `tableName.` to avoid collisions
 
-To learn more about Next.js, take a look at the following resources:
+## How to Run
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Web Dashboard
+1. Install dependencies and start dev server (Next.js 13+ required):
+   ```bash
+   npm install
+   npm run dev
+   ```
+2. Open the dashboard at http://localhost:3000/dashboard and issue SQL statements.
+3. Example sequence:
+   ```sql
+   CREATE TABLE users (id INT PRIMARY KEY, name TEXT);
+   INSERT INTO users VALUES (1, 'Ada');
+   SELECT * FROM users;
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Terminal REPL
+Alternatively, use the interactive command-line REPL:
+```bash
+npm install
+npm run repl
+```
 
-## Deploy on Vercel
+Then execute SQL statements with table-formatted output:
+```
+db > CREATE TABLE users (id INT PRIMARY KEY, name TEXT);
+db > INSERT INTO users VALUES (1, 'Ada');
+db > SELECT * FROM users;
++----+-----+
+| id | name|
++----+-----+
+| 1  | Ada |
++----+-----+
+db > exit
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+For detailed testing examples, see [TESTING.md](TESTING.md).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## AI Usage Disclosure
+This implementation was drafted with the assistance of an AI coding tool (GitHub Copilot), then reviewed and adjusted for correctness and clarity.
