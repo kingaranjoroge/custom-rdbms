@@ -1,0 +1,31 @@
+{
+  "name": "orders",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "primaryKey": true,
+      "unique": true
+    },
+    {
+      "name": "user_id",
+      "type": "INT",
+      "primaryKey": false,
+      "unique": true
+    },
+    {
+      "name": "total",
+      "type": "INT",
+      "primaryKey": false,
+      "unique": false
+    }
+  ],
+  "rows": [
+    {
+      "_id": 1,
+      "id": 10,
+      "user_id": 1,
+      "total": 42
+    }
+  ]
+}

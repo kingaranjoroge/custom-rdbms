@@ -1,0 +1,24 @@
+{
+  "name": "books",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "primaryKey": true,
+      "unique": true
+    },
+    {
+      "name": "name",
+      "type": "TEXT",
+      "primaryKey": false,
+      "unique": false
+    }
+  ],
+  "rows": [
+    {
+      "_id": 1,
+      "id": 1,
+      "name": "Book1"
+    }
+  ]
+}
